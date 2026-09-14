@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum NumberType {
+  normal
+  priority
+}
+
+enum QueueStatus {
+  WAITING
+  CALLED
+  EXPIRED
+}
+
+model User {
+  id String @id @default(uuid()) @db.Uuid
+  username String @unique
+  password String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model QueueNumber {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  cpf String
+  type NumberType
+  queueNumber String
+  status QueueStatus @default(WAITING)
+  calledAt DateTime?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("queue_numbers")
+}
+
+model QueueCounters {
+  id String @id @default(uuid()) @db.Uuid
+  type NumberType @unique
+  currentNumber Int @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("queue_counters")
+}
