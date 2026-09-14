@@ -85,14 +85,11 @@ Rotas:
 
 ## Como rodar o projeto
 
-### 1. Backend
+### 1. Banco de dados (Docker)
 
-```bash
-cd back
-npm install
-```
+O projeto inclui um `docker-compose.yml` para subir o PostgreSQL localmente.
 
-Crie um arquivo `.env` na pasta `back/` com:
+Crie um arquivo `.env` na raiz do projeto (mesma pasta do `docker-compose.yml`) com:
 
 ```env
 DATABASE_URL="postgresql://usuario:senha@localhost:5432/nome_do_banco"
@@ -100,6 +97,21 @@ POSTGRES_USER=postgres
 POSTGRES_PASSWORD=root
 POSTGRES_DB=queue_db
 SECRET_KEY='sua chave'
+```
+
+Suba o container:
+
+```bash
+docker compose up -d
+```
+
+O banco fica disponível em `localhost:5432`
+
+### 2. Backend
+
+```bash
+cd back
+npm install
 ```
 
 Rode as migrations e o seed (cria os contadores iniciais de senha normal/prioritária):
@@ -117,7 +129,7 @@ npm run dev
 
 A API sobe em `http://localhost:3333`.
 
-### 2. Frontend
+### 3. Frontend
 
 ```bash
 cd front
@@ -175,7 +187,3 @@ front/
 - Tela de login no frontend para o painel do operador
 - Testes automatizados (unitários e e2e)
 - Deploy com Docker / docker-compose (API + PostgreSQL)
-
-## Licença
-
-Defina aqui a licença do projeto (ex: MIT).
