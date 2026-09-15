@@ -13,21 +13,26 @@ export class AuthTokenGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
+    const token = this.extractTokenFromCookie(request);
 
     if (!token) throw new UnauthorizedException('Not logged');
 
     try {
       const payload = await this.jwtService.verifyAsync(token);
+      request['payload'] = payload;
       return true;
     } catch (error) {
       throw new UnauthorizedException('Failed to login');
     }
   }
 
-  extractTokenFromHeader(request: Request): string | undefined {
-    const authorization = request.headers.authorization;
-    if (!authorization || typeof authorization !== 'string') return;
-    return authorization.split(' ')[1];
+  // extractTokenFromHeader(request: Request): string | undefined {
+  //   const authorization = request.headers.authorization;
+  //   if (!authorization || typeof authorization !== 'string') return;
+  //   return authorization.split(' ')[1];
+  // }
+
+  extractTokenFromCookie(request: Request): string | undefined {
+    return request.cookies?.['access_token'];
   }
 }
