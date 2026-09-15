@@ -2,6 +2,9 @@ import { api } from "@/services/api";
 import type { PanelData, PendingItem } from "@/types/numbers";
 import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
+import { LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router";
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:3333";
 
@@ -12,6 +15,9 @@ export default function OperatorPage() {
     lastCalls: [],
   });
   const socketRef = useRef<Socket | null>(null);
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
   useEffect(() => {
     const socket = io(`${SOCKET_URL}/queue`, {
       transports: ["websocket"],
@@ -51,12 +57,27 @@ export default function OperatorPage() {
   async function callNext(id: string) {
     await api.post<string>(`/numbers/call-next/${id}`);
   }
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <div className="flex flex-col gap-5 min-h-screen bg-gray-950 text-gray-100">
-      <header className="px-10 py-6 border-b border-gray-800 bg-gray-900 shadow-md">
+      <header className="px-10 py-6 border-b border-gray-800 bg-gray-900 shadow-md flex items-center justify-between">
         <h1 className="text-2xl font-semibold tracking-wide">
           Painel de Atendimento
         </h1>
+        <button
+          className="flex items-center gap-2 px-3 py-2 rounded-md
+             text-gray-300 hover:bg-gray-800 hover:text-white
+             cursor-pointer transition-colors"
+          onClick={handleLogout}
+        >
+          <LogOut size={18} />
+          Logout
+        </button>
       </header>
 
       <main className="flex gap-6 justify-around items-stretch p-8">
